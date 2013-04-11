@@ -10,8 +10,7 @@ namespace AzureIndex
         public static DateTimeOffset? LastModified { get; set; } // last updated datetime
         public static DateTime LastChecked { get; set; } // last time we checked index in storage
 
-        public static void PushToStorage(string indexPath, string packageFileName, string storageInfo,
-                                         string containerName)
+        public static void PushToStorage(string storageInfo, string containerName,  string packageFileName,string indexPath)
         {
             string destDir = Directory.GetParent(indexPath).ToString(); //index dir parent to store archive
             string destPath = Path.Combine(destDir, packageFileName);
@@ -21,7 +20,7 @@ namespace AzureIndex
         }
 
         public static void CheckStorage(string storageInfo, string containerName, string packageFileName,
-                                        string indexPath, uint checkEverySeconds)
+                                        string indexPath, int checkEverySeconds)
         {
             if (LastChecked != null && DateTime.UtcNow.AddSeconds(0 - checkEverySeconds) < LastChecked) //wait xx seconds until next peek in blob storage
             {

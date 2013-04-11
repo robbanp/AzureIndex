@@ -4,4 +4,3 @@ C:\work\AzureIndex\AzureIndex\bin\Debug\Microsoft.WindowsAzure.Storage.dll
 C:\work\AzureIndex\AzureIndex\bin\Debug\Microsoft.WindowsAzure.Storage.xml
 C:\work\AzureIndex\AzureIndex\obj\Debug\AzureIndex.dll
 C:\work\AzureIndex\AzureIndex\obj\Debug\AzureIndex.pdb
-C:\work\AzureIndex\AzureIndex\obj\Debug\AzureIndex.csprojResolveAssemblyReference.cache
