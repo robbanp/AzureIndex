@@ -12,7 +12,11 @@ Example:
 Push index folder to Azure Blob Storage withe the name lucene.zip
 
 ```csharp
-IndexHandler.PushToStorage(ConfigurationManager.AppSettings["blobStorage"],"lucenecontainer","lucene.zip","c://luceneindex/");
+IndexHandler.PushToStorage(
+    ConfigurationManager.AppSettings["blobStorage"],
+    "lucenecontainer",
+    "lucene.zip",
+    "c://luceneindex/");
 
 ```
 
