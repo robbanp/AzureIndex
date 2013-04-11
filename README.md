@@ -1,6 +1,8 @@
 AzureIndex
 ==========
 
+C# 4.5, Visual Studio 2012
+
 Solution for handling Lucene.NET index directory files in Windows Azure using BlobStorage by creating a ZIP archive that is uploaded to Azure Blob Storage and synced with a client..
 
 How it works:
@@ -21,7 +23,7 @@ IndexHandler.PushToStorage(
 ```
 
 Example: 
-Check for new ZIP archive on blob storage and download it, extract and replace current lucene index folder
+Check for new ZIP archive on Blob Storage and download it, extract and replace current lucene index folder
 ```csharp
 AzureIndex.IndexHandler.CheckStorage(
     ConfigurationManager.AppSettings["blobStorage"],
