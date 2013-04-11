@@ -8,3 +8,9 @@ Create Index -> ZIP'ed and uploaded to Blob Storage -> Client is pulling to see 
 
 
 
+Example: Push archive to Azure Blob Storage
+
+```csharp
+IndexHandler.PushToStorage(ConfigurationManager.AppSettings["blobStorage"],"lucenecontainer","lucene.zip","c://luceneindex/");
+
+```
