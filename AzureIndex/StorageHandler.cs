@@ -1,46 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace AzureIndex
 {
-
     public class StorageHandler
     {
-        private CloudStorageAccount storageAccount { get; set; }
-
         public StorageHandler(string storageInfo)
         {
             storageAccount = CloudStorageAccount.Parse(storageInfo);
         }
 
+        private CloudStorageAccount storageAccount { get; set; }
+
         public CloudBlockBlob GetBlob(string container, string fileName)
         {
-            var blobClient = storageAccount.CreateCloudBlobClient();
-            var blobContainer = blobClient.GetContainerReference(container);
+            CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+            CloudBlobContainer blobContainer = blobClient.GetContainerReference(container);
             return blobContainer.GetBlockBlobReference(fileName);
         }
 
         public void SetBlob(string container, string fileName)
         {
-            var blobClient = storageAccount.CreateCloudBlobClient();
-            var blobContainer = blobClient.GetContainerReference(container);
+            CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+            CloudBlobContainer blobContainer = blobClient.GetContainerReference(container);
             blobContainer.CreateIfNotExists();
             blobContainer.SetPermissions(
                 new BlobContainerPermissions
-                {
-                    PublicAccess =
-                        BlobContainerPublicAccessType.Blob
-                });
+                    {
+                        PublicAccess =
+                            BlobContainerPublicAccessType.Blob
+                    });
 
-            var blockBlob = blobContainer.GetBlockBlobReference(Path.GetFileName(fileName));
+            CloudBlockBlob blockBlob = blobContainer.GetBlockBlobReference(Path.GetFileName(fileName));
             blockBlob.UploadFromStream(File.OpenRead(fileName));
         }
 

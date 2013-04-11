@@ -1,47 +1,50 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace AzureIndex
 {
-
     public class IndexHandler
     {
-        public static DateTimeOffset? LastModified { get; set; }
-        public static Object IndexLock = new Object();
+        public static Object IndexLock = new Object(); //lock index while updating it
+        public static DateTimeOffset? LastModified { get; set; } // last updated datetime
+        public static DateTime LastChecked { get; set; } // last time we checked index in storage
 
-        public static void PushToStorage(string indexPath, string packageFileName, string storageInfo, string containerName)
+        public static void PushToStorage(string indexPath, string packageFileName, string storageInfo,
+                                         string containerName)
         {
-            var destDir = System.IO.Directory.GetParent(indexPath).ToString();//index dir parent to store archive
-            var destPath = System.IO.Path.Combine(destDir, packageFileName);
-            StorageHandler.CreateArchive(indexPath,destPath);
+            string destDir = Directory.GetParent(indexPath).ToString(); //index dir parent to store archive
+            string destPath = Path.Combine(destDir, packageFileName);
+            StorageHandler.CreateArchive(indexPath, destPath);
             var storage = new StorageHandler(storageInfo);
             storage.SetBlob(containerName, destPath);
         }
 
-        public static void CheckStorage(string storageInfo, string containerName, string packageFileName, string indexPath)
+        public static void CheckStorage(string storageInfo, string containerName, string packageFileName,
+                                        string indexPath, uint checkEverySeconds)
         {
+            if (LastChecked != null && DateTime.UtcNow.AddSeconds(0 - checkEverySeconds) < LastChecked) //wait xx seconds until next peek in blob storage
+            {
+                return;
+            }
+            LastChecked = DateTime.UtcNow;
+
             var storage = new StorageHandler(storageInfo);
-            var blob = storage.GetBlob(containerName, packageFileName);
+            CloudBlockBlob blob = storage.GetBlob(containerName, packageFileName);
 
             blob.FetchAttributes();
-            var modified = blob.Properties.LastModified;
+            DateTimeOffset? modified = blob.Properties.LastModified;
             if (modified > LastModified || LastModified == null)
             {
-                var zipPath = Directory.GetParent(indexPath).ToString();
-                var archiveDest = Path.Combine(zipPath, packageFileName);
-                using (var fileStream = System.IO.File.OpenWrite(archiveDest))
+                string zipPath = Directory.GetParent(indexPath).ToString();
+                string archiveDest = Path.Combine(zipPath, packageFileName);
+                using (FileStream fileStream = File.OpenWrite(archiveDest))
                 {
                     blob.DownloadToStream(fileStream);
                 }
                 LastModified = modified;
                 lock (IndexLock)
                 {
-
                     StorageHandler.ExtractArchive(indexPath + "_tmp", archiveDest);
                     if (Directory.Exists(indexPath))
                     {
