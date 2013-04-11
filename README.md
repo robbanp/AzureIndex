@@ -33,3 +33,5 @@ AzureIndex.IndexHandler.CheckStorage(
     600); //check "LastModified" every 10 min.
 
 ```
+
+By Robert Pohl, robert@sugarcubesolutions.com - http://sugarcubesolutions.com
