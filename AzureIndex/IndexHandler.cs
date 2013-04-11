@@ -1,4 +1,6 @@
-﻿using System;
+﻿//By Robert Pohl, robert@sugarcubesolutions.com
+ 
+using System;
 using System.IO;
 using Microsoft.WindowsAzure.Storage.Blob;
 
@@ -6,10 +8,17 @@ namespace AzureIndex
 {
     public class IndexHandler
     {
-        public static Object IndexLock = new Object(); //lock index while updating it
-        public static DateTimeOffset? LastModified { get; set; } // last updated datetime
-        public static DateTime LastChecked { get; set; } // last time we checked index in storage
+        private static Object IndexLock = new Object(); //lock index while updating it
+        private static DateTimeOffset? LastModified { get; set; } // last updated datetime
+        private static DateTime LastChecked { get; set; } // last time we checked index in storage
 
+        /// <summary>
+        /// Push file to Blob storage
+        /// </summary>
+        /// <param name="storageInfo">Connection info</param>
+        /// <param name="containerName">Container name</param>
+        /// <param name="packageFileName">File name</param>
+        /// <param name="indexPath">Path to local folder</param>
         public static void PushToStorage(string storageInfo, string containerName,  string packageFileName,string indexPath)
         {
             string destDir = Directory.GetParent(indexPath).ToString(); //index dir parent to store archive
@@ -19,6 +28,14 @@ namespace AzureIndex
             storage.SetBlob(containerName, destPath);
         }
 
+        /// <summary>
+        /// Check and update folder if it's new
+        /// </summary>
+        /// <param name="storageInfo">Connection info</param>
+        /// <param name="containerName">Container name</param>
+        /// <param name="packageFileName">Archive file name</param>
+        /// <param name="indexPath">Path to folder</param>
+        /// <param name="checkEverySeconds">Number of seconds between blob storage check</param>
         public static void CheckStorage(string storageInfo, string containerName, string packageFileName,
                                         string indexPath, int checkEverySeconds)
         {
