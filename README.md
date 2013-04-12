@@ -25,7 +25,7 @@ IndexHandler.PushToStorage(
 Example: 
 Check for new ZIP archive on Blob Storage and download it, extract and replace current lucene index folder
 ```csharp
-AzureIndex.IndexHandler.CheckStorage(
+IndexHandler.CheckStorage(
     ConfigurationManager.AppSettings["blobStorage"],
     "lucenecontainer",
     "lucene.zip",
