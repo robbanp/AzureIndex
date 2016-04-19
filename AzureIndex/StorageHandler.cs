@@ -73,8 +73,13 @@ namespace AzureIndex
         /// </summary>
         /// <param name="outDir">Folder to create</param>
         /// <param name="inFile">ZIP archive to extract</param>
-        public static void ExtractArchive(string outDir, string inFile)
+        /// <param name="delDest">Delete desination extract directory (recursive)</param>
+        public static void ExtractArchive(string outDir, string inFile, bool delDest = true)
         {
+            if (Directory.Exists(outDir) && delDest)
+            {
+                Directory.Delete(outDir,true);
+            }
             ZipFile.ExtractToDirectory(inFile, outDir);
         }
     }
